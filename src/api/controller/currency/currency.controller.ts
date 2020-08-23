@@ -1,4 +1,4 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { Currency } from '../../entity/currency.entity';
 import { CurrencyService } from '../../services/currency.service';
 

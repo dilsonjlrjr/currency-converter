@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CurrencyController } from './currency.controller';
 import { CurrencyService } from '../../services/currency.service';
 import { Currency } from '../../entity/currency.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('CurrencyController Test', () => {
   let controller: CurrencyController;
