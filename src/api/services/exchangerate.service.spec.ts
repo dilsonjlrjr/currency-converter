@@ -24,13 +24,19 @@ describe("ExchangeRate cosume service", () => {
     apiHttp = new ExchangeRateService(httpService);
   })
 
-  it("Should get result api", () => {
-    apiHttp.getExchangeRate("USD").then((result) => {
-      console.log("teste")
-      console.log(result.data)
-    }).catch((rejects) => {
-      console.log(rejects)
+  it("should get result api",async() => {
+    const base: string = "USD";
+    await apiHttp.getExchangeRate(base).then((result) => {
+      expect(result.base).toBe(base)
     })
+  });
+
+  it("should capture exception api", async () => {
+    const base: string = "aaa";
+    await apiHttp.getExchangeRate(base).catch((reason => {
+      expect(Object.keys(reason.response.data)[0]).toEqual("error")
+      expect(reason.response.data.error).toEqual(`Base '${base}' is not supported.`)
+    }))
   });
 
   afterAll(async () => {
