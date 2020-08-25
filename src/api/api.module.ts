@@ -1,5 +1,4 @@
 import { HttpModule, Module } from '@nestjs/common';
-import { Currency } from './entity/currency.entity';
 import { CurrencyController } from './controller/currency.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CurrencyConvertService } from './services/currencyconvert.service';
@@ -9,7 +8,7 @@ import { ExchangeRateService } from './services/exchangerate.service';
 
 @Module({
     imports: [
-      TypeOrmModule.forFeature([Currency]),
+      TypeOrmModule.forFeature([]),
       HttpModule.register({
         timeout: 5000
       })
