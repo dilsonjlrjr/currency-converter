@@ -6,7 +6,7 @@ describe('CurrencyConverterController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [CurrencyconverterController],
+      controllers: [CurrencyConverterController],
     }).compile();
 
     controller = module.get<CurrencyConverterController>(CurrencyConverterController);

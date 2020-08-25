@@ -25,17 +25,17 @@ describe("external consume service", () => {
   })
 
   it("should get result api",async() => {
-    const base: string = "USD";
+    const base = "USD";
     await apiHttp.getExchangeRate(base).then((result) => {
       expect(result.base).toBe(base)
     })
   });
 
   it("should capture exception api", async () => {
-    const base: string = "aaa";
+    const base = "aaa";
     await apiHttp.getExchangeRate(base).catch((reason => {
-      expect(Object.keys(reason.response.data)[0]).toEqual("error")
-      expect(reason.response.data.error).toEqual(`Base '${base}' is not supported.`)
+      expect(reason.status).toEqual(400);
+      expect(reason.message).toEqual(`The selected currency type is not found!`)
     }))
   });
 
