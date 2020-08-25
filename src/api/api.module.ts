@@ -1,8 +1,11 @@
 import { HttpModule, Module } from '@nestjs/common';
-import { CurrencyService } from './services/currency.service';
 import { Currency } from './entity/currency.entity';
-import { CurrencyController } from './controller/currency/currency.controller';
+import { CurrencyController } from './controller/currency.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CurrencyConvertService } from './services/currencyconvert.service';
+import { CurrencyService } from './services/currency.service';
+import { CurrencyConverterController } from './controller/currencyconverter.controller';
+import { ExchangeRateService } from './services/exchangerate.service';
 
 @Module({
     imports: [
@@ -11,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         timeout: 5000
       })
     ],
-    providers: [CurrencyService],
-    controllers: [CurrencyController],
+    providers: [CurrencyService, CurrencyConvertService, ExchangeRateService],
+    controllers: [CurrencyController, CurrencyConverterController],
 })
 export class ApiModule {}

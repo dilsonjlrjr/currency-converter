@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { ExchangeRateService } from './exchangerate.service';
 
 
-describe("ExchangeRate cosume service", () => {
+describe("external consume service", () => {
   let apiHttp: ExchangeRateService;
   let httpService: HttpService;
   let app: INestApplication;

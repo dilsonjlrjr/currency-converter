@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CurrencyController } from './currency.controller';
-import { CurrencyService } from '../../services/currency.service';
-import { Currency } from '../../entity/currency.entity';
+import { CurrencyService } from '../services/currency.service';
+import { Currency } from '../entity/currency.entity';
 
 describe('CurrencyController Test', () => {
   let controller: CurrencyController;
@@ -34,7 +34,7 @@ describe('CurrencyController Test', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('Route findAll', () => {
+  describe('route findall', () => {
     it('should return all type currency', async () => {
       await expect(controller.findAll()).resolves.toEqual(listCurrency);
     })

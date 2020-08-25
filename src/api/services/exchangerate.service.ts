@@ -1,4 +1,4 @@
-import { HttpService, Injectable } from '@nestjs/common';
+import { HttpException, HttpService, HttpStatus, Injectable } from '@nestjs/common';
 import { ExchangeModel } from '../entity/model/exchange.model';
 import { AxiosResponse } from 'axios'
 import { RateModel } from '../entity/model/rate.model';
@@ -22,9 +22,7 @@ export class ExchangeRateService {
         resolve(exchange);
       })
     } catch (e) {
-      return new Promise((resolve, reject) => {
-        reject(e);
-      })
+      throw new HttpException("The selected currency type is not found!", HttpStatus.BAD_REQUEST)
     }
   }
 
@@ -50,5 +48,14 @@ export class ExchangeRateService {
     })
 
     return exchange;
+  }
+
+  getRate(exchangeModel: ExchangeModel, currencyOrigin: string): RateModel {
+    let rateModel: RateModel[] = exchangeModel.rates.filter((value) => value.name === currencyOrigin);
+
+    if (rateModel.length == 0)
+      throw new HttpException("The selected currency type is not found", HttpStatus.BAD_REQUEST)
+
+    return rateModel[0];
   }
 }

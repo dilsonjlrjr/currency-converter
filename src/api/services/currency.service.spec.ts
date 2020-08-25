@@ -36,7 +36,7 @@ describe('CoinsService', () => {
     });
 
     describe("getAll", () => {
-        it("shouldGetAllCoinsType", async () => {
+        it("should get all type coins", async () => {
             const spyRepositoryCurrency = jest.spyOn(currencyRepository, 'find');
 
             await currencyService.findAll().then((value) => {
@@ -45,7 +45,7 @@ describe('CoinsService', () => {
             expect(spyRepositoryCurrency).toBeCalledTimes(1);
         });
 
-        it("shouldGenerateExceptionPersistDatabase", async () => {
+        it("should generate exception persist database", async () => {
             const modRefThrow = await Test.createTestingModule({
                 providers: [
                     {
