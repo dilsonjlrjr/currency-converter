@@ -1,4 +1,4 @@
-import { HttpService, Injectable } from '@nestjs/common';
+import { HttpException, HttpService, HttpStatus, Injectable } from '@nestjs/common';
 import { ExchangeModel } from '../entity/model/exchange.model';
 import { AxiosResponse } from 'axios'
 import { RateModel } from '../entity/model/rate.model';
@@ -10,21 +10,18 @@ export class ExchangeRateService {
 
   constructor(private httpService: HttpService) {}
 
-  async getExchangeRate(coinType: string): Promise<ExchangeModel> {
+  async getExchangeRate(coinType = 'BRL'): Promise<ExchangeModel> {
     try {
-      let apiService: AxiosResponse<any> = await this.httpService.get(this.mountUrl(coinType)).toPromise();
-
+      const apiService: AxiosResponse<any> = await this.httpService.get(this.mountUrl(coinType)).toPromise();
       let exchange: ExchangeModel = new ExchangeModel();
 
       exchange = this.buildExchangeModel(apiService);
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         resolve(exchange);
       })
     } catch (e) {
-      return new Promise((resolve, reject) => {
-        reject(e);
-      })
+      throw new HttpException("The selected currency type is not found!", HttpStatus.BAD_REQUEST)
     }
   }
 
@@ -33,22 +30,30 @@ export class ExchangeRateService {
   }
 
   private buildExchangeModel(apiData: any): ExchangeModel {
-    let exchange: ExchangeModel = new ExchangeModel();
+    const exchange: ExchangeModel = new ExchangeModel();
 
     exchange.base = apiData.data.base;
     exchange.date = apiData.data.date;
     exchange.rates = new Array<RateModel>();
 
-    let objectArrayCurrency: any;
-    objectArrayCurrency = Object.entries(apiData.data.rates);
+    let objectArrayCurrency = Object.entries(apiData.data.rates);
 
     objectArrayCurrency.map((value) => {
-      let rate = new RateModel()
+      const rate = new RateModel()
       rate.name = value[0]
-      rate.value = value[1]
+      rate.value = <number> value[1]
       exchange.rates.push(rate)
     })
 
     return exchange;
+  }
+
+  getRate(exchangeModel: ExchangeModel, currencyOrigin: string): RateModel {
+    const rateModel: RateModel[] = exchangeModel.rates.filter((value) => value.name === currencyOrigin);
+
+    if (rateModel.length == 0)
+      throw new HttpException("The selected currency type is not found", HttpStatus.BAD_REQUEST)
+
+    return rateModel[0];
   }
 }

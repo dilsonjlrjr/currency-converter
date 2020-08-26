@@ -1,14 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
-import { Currency } from '../../entity/currency.entity';
-import { CurrencyService } from '../../services/currency.service';
+import { CurrencyService } from '../services/currency.service';
 
-@Controller('currency')
+@Controller('/api/currency')
 export class CurrencyController {
 
   constructor(private serviceCurrency: CurrencyService) {}
 
   @Get()
-  async findAll(): Promise<Currency[]> {
+  async findAll(): Promise<string[]> {
     return await this.serviceCurrency.findAll();
   }
 }

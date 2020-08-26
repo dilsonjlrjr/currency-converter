@@ -1,22 +1,27 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Currency } from '../entity/currency.entity';
-import { Repository } from 'typeorm';
+import { ExchangeRateService } from './exchangerate.service';
+import { RateModel } from '../entity/model/rate.model';
 
 @Injectable()
 export class CurrencyService {
-    constructor(
-      @InjectRepository(Currency)
-      private readonly currencyRepository: Repository<Currency>,
-      ) {}
+    constructor(private readonly apiExchangeRate: ExchangeRateService) {}
 
-    async findAll(): Promise<Currency[]> {
+    async findAll(): Promise<string[]> {
+        let listRateModel: RateModel[];
+        let listTypeCurrency: Array<string> = new Array<string>();
+
         try {
-            return this.currencyRepository.find();
-        } catch (err) {
-            return Promise.reject(err.message).catch(err => {
-                throw new HttpException({ status: HttpStatus.BAD_REQUEST, error: "Error get all type currency!" }, HttpStatus.BAD_REQUEST);
+            listRateModel = await this.apiExchangeRate.getExchangeRate().then((result) => {
+                return result.rates;
             });
+
+            listRateModel.map((rateModel) => {
+                listTypeCurrency.push(rateModel.name);
+            });
+
+            return listTypeCurrency;
+        } catch (err) {
+            throw new HttpException({ status: HttpStatus.BAD_REQUEST, error: "Error get all type currency!" }, HttpStatus.BAD_REQUEST);
         }        
     }
 }

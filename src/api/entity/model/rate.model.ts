@@ -1,5 +1,5 @@
 
 export class RateModel {
   name: string
-  value: bigint
+  value: number
 }

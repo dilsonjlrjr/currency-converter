@@ -1,34 +1,29 @@
 import { CurrencyService } from "./currency.service"
-import { Repository } from "typeorm";
-import { Currency } from "../entity/currency.entity";
 import { Test } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpModule, HttpService } from '@nestjs/common';
+import { ExchangeRateService } from './exchangerate.service';
 
 describe('CoinsService', () => {
     let currencyService: CurrencyService;
-    let currencyRepository: Repository<Currency>;
-
-    const listCurrency: Array<Currency> = [
-        new Currency('CAD'),
-        new Currency('USD'),
-        new Currency('BRL')
-    ]
+    let apiHttp: ExchangeRateService;
+    let httpService: HttpService;
 
     beforeEach(async () => {
-        const modRef = await Test.createTestingModule({
-            providers: [
-                {
-                    provide: getRepositoryToken(Currency),
-                    useValue: {
-                        find: jest.fn().mockResolvedValue(listCurrency)
-                    }
-                }
+        const app = await Test.createTestingModule({
+            imports: [
+                HttpModule.register({
+                    timeout: 10000
+                })
             ]
         }).compile();
 
-        currencyRepository = modRef.get<Repository<Currency>>(getRepositoryToken(Currency));
-        currencyService = new CurrencyService(currencyRepository)
+        app.createNestApplication();
+        await app.init();
+
+        httpService = app.get<HttpService>(HttpService);
+        apiHttp = new ExchangeRateService(httpService);
+
+        currencyService = new CurrencyService(apiHttp);
     });
 
     it('should be defined', () => {
@@ -36,31 +31,11 @@ describe('CoinsService', () => {
     });
 
     describe("getAll", () => {
-        it("shouldGetAllCoinsType", async () => {
-            const spyRepositoryCurrency = jest.spyOn(currencyRepository, 'find');
 
+        it("should get all type coins", async () => {
             await currencyService.findAll().then((value) => {
-                expect(value).toBe(listCurrency);
+                expect(value).toBeInstanceOf(Array)
             });
-            expect(spyRepositoryCurrency).toBeCalledTimes(1);
         });
-
-        it("shouldGenerateExceptionPersistDatabase", async () => {
-            const modRefThrow = await Test.createTestingModule({
-                providers: [
-                    {
-                        provide: getRepositoryToken(Currency),
-                        useValue: {
-                            find: jest.fn().mockImplementation(() => new HttpException({ status: HttpStatus.BAD_REQUEST, error: "Error get all type currency!" }, HttpStatus.BAD_REQUEST))
-                        }
-                    }
-                ]
-            }).compile();
-
-            currencyRepository = modRefThrow.get<Repository<Currency>>(getRepositoryToken(Currency));
-            currencyService = new CurrencyService(currencyRepository)
-
-            currencyService.findAll().catch( e => expect(e.message.error).toEqual("Error insert value in database!"))
-        })
     });
 })
