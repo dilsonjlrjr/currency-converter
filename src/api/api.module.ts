@@ -6,6 +6,7 @@ import { ExchangeRateService } from './services/exchangerate.service';
 import { OperationTransaction } from './entity/operationtransaction.entity';
 import { CurrencyController } from './controller/currency.controller';
 import { CurrencyConverterController } from './controller/currencyconverter.controller';
+import { CurrencyTransactionController } from './controller/currencytransaction.controller';
 
 @Module({
     imports: [
@@ -15,6 +16,6 @@ import { CurrencyConverterController } from './controller/currencyconverter.cont
       })
     ],
     providers: [CurrencyService, CurrencyConvertService, ExchangeRateService],
-    controllers: [CurrencyController, CurrencyConverterController],
+    controllers: [CurrencyController, CurrencyConverterController, CurrencyTransactionController],
 })
 export class ApiModule {}

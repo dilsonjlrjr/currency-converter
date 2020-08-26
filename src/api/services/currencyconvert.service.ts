@@ -19,11 +19,13 @@ export class CurrencyConvertService {
     let operationTransaction: OperationTransaction;
     let exchange: ExchangeModel = await this.apiExchangeRate.getExchangeRate(transaction.currencyorigin);
     let rate: RateModel;
+    let valueCurrency: number;
     let valueDestinyCalculated: number;
 
     rate = this.apiExchangeRate.getRate(exchange, transaction.currencydestiny);
 
-    valueDestinyCalculated = (1 / rate.value);
+    valueCurrency = (1 / rate.value);
+    valueDestinyCalculated = transaction.value / valueCurrency;
 
     operationTransaction = new OperationTransaction();
     operationTransaction.iduser = transaction.iduser;
@@ -34,10 +36,12 @@ export class CurrencyConvertService {
     operationTransaction.tax = rate.value
     operationTransaction.dateoperation = new Date().toISOString();
 
-    this.operationTransactionRepository.save(operationTransaction).then((value) => {
-      operationTransaction = value;
-    });
+    await this.operationTransactionRepository.save(operationTransaction);
 
     return operationTransaction;
+  }
+
+  async getAll(): Promise<OperationTransaction[]> {
+    return this.operationTransactionRepository.find();
   }
 }
