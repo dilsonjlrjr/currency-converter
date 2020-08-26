@@ -20,7 +20,8 @@ describe('CurrencyConvertService', () => {
         {
           provide: getRepositoryToken(OperationTransaction),
           useValue: {
-            save: jest.fn().mockResolvedValue(new OperationTransaction())
+            save: jest.fn().mockResolvedValue(new OperationTransaction()),
+            find: jest.fn().mockRejectedValue([ new OperationTransaction() ])
           }
         }
       ]
@@ -42,5 +43,17 @@ describe('CurrencyConvertService', () => {
     const service: CurrencyConvertService = new CurrencyConvertService(apiExchangeRate,repositoryOperationTransaction);
 
     expect(service.convertCurrency(new TransactionDTO())).toBeInstanceOf(Promise);
+  });
+
+  it('should get all transaction', async() => {
+    const service: CurrencyConvertService = new CurrencyConvertService(apiExchangeRate,repositoryOperationTransaction);
+
+    let getAll: Promise<OperationTransaction[]> = service.getAll();
+
+
+    expect(getAll).toBeInstanceOf(Promise);
+    getAll.then((value => {
+      expect(value.length).toEqual(1);
+    }));
   });
 });
