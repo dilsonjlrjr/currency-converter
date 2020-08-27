@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+
+  mongo:
+    image: mysql:5.6
+    restart: always
+    ports: 
+        - 3306:3306
+    environment:
+        MYSQL_ROOT_PASSWORD: 123456
