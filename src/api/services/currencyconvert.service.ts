@@ -16,8 +16,8 @@ export class CurrencyConvertService {
     private operationTransactionRepository: Repository<OperationTransaction>) {}
 
   async convertCurrency(transaction: TransactionDTO): Promise<OperationTransaction> {
-    let operationTransaction: OperationTransaction;
-    let exchange: ExchangeModel = await this.apiExchangeRate.getExchangeRate(transaction.currencyorigin);
+    const operationTransaction: OperationTransaction = new OperationTransaction();
+    const exchange: ExchangeModel = await this.apiExchangeRate.getExchangeRate(transaction.currencyorigin);
     let rate: RateModel;
     let valueCurrency: number;
     let valueDestinyCalculated: number;
@@ -27,7 +27,6 @@ export class CurrencyConvertService {
     valueCurrency = (1 / rate.value);
     valueDestinyCalculated = transaction.value / valueCurrency;
 
-    operationTransaction = new OperationTransaction();
     operationTransaction.iduser = transaction.iduser;
     operationTransaction.currencyorigin = transaction.currencyorigin;
     operationTransaction.currencydestiny = transaction.currencydestiny;
@@ -43,5 +42,9 @@ export class CurrencyConvertService {
 
   async getAll(): Promise<OperationTransaction[]> {
     return this.operationTransactionRepository.find();
+  }
+
+  async getOne(id: number): Promise<OperationTransaction[]> {
+    return this.operationTransactionRepository.find({ iduser: id });
   }
 }
